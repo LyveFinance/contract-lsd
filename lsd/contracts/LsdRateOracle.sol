@@ -1,7 +1,7 @@
 pragma solidity ^0.8.19;
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {ILsdRateOracle} from "../interfaces/ILsdRateOracle.sol";
+import {ILsdRateOracle} from "./interfaces/ILsdRateOracle.sol";
 
 
 contract LsdRateOracle is ILsdRateOracle ,ReentrancyGuard{

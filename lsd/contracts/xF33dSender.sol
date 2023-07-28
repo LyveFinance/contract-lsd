@@ -87,6 +87,7 @@ contract xF33dSender is Ownable2Step, ILayerZeroReceiver {
         uint16 _chainId,
         address _feed,
         bytes calldata _feedData,
+        address _lsdRateOracle,
         bytes memory _bytecode
     ) external payable returns (address) {
         if (protectedFeeds[keccak256(abi.encode(_chainId, _feed))].length > 0)
@@ -109,7 +110,8 @@ contract xF33dSender is Ownable2Step, ILayerZeroReceiver {
         // Initialize the feed contract.
         IxF33dReceiver(receiver).init(
             address(lzEndpoint),
-            remoteSrcAddress[_chainId]
+            remoteSrcAddress[_chainId],
+            _lsdRateOracle
         );
 
         // Send a message to the remote chain to indicate that the feed has been deployed.

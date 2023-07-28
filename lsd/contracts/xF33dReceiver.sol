@@ -21,7 +21,7 @@ contract xF33dReceiver is ILayerZeroReceiver ,IxF33dReceiver{
 
     bool private initialized;
 
-    ILsdRateOracle public lsdRateOracle;
+    address public lsdRateOracle;
 
     event FeedUpdated(uint32 lastUpdated);
 
@@ -30,10 +30,11 @@ contract xF33dReceiver is ILayerZeroReceiver ,IxF33dReceiver{
         _;
     }
 
-    function init(address _endpoint, address _srcAddress) public isInitialized {
+    function init(address _endpoint, address _srcAddress,address _lsdRateOracle) public isInitialized {
         lzEndpoint = ILayerZeroEndpoint(_endpoint);
         srcAddress = _srcAddress;
         initialized = true;
+        lsdRateOracle = _lsdRateOracle;
     }
 
     function lzReceive(
@@ -60,7 +61,7 @@ contract xF33dReceiver is ILayerZeroReceiver ,IxF33dReceiver{
             oracleData,
             (uint80, int256, uint256, uint256, uint80)
         );
-        lsdRateOracle.setLsdRate(rate);
+        ILsdRateOracle(lsdRateOracle).setLsdRate(rate);
         emit FeedUpdated(lastUpdated);
     }
 }
