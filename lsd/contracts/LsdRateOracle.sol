@@ -1,26 +1,32 @@
 pragma solidity ^0.8.19;
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {ILsdRateOracle} from "./interfaces/ILsdRateOracle.sol";
+import {ILsdRateOracle} from "../interfaces/ILsdRateOracle.sol";
 
 
 contract LsdRateOracle is ILsdRateOracle ,ReentrancyGuard{
-    mapping(address => uint256) private rates; 
-    address public owner;
+    
+    address public lsdToken;
+    uint256 public rate;
+    address public rateManager;
     constructor() {
-        owner = msg.sender;
+         rateManager = msg.sender;
     }
+  
+   function setRateManager(address _rateManager) view external returns(uint256){
+        require(msg.sender == rateManager,"not rateManager");
+        rateManager = _rateManager;
 
-    function getLsdRate(address _lsdToken) view external returns(uint256){
-        return rates[_lsdToken];
     }
-    function setLsdRate(address _lsdToken,uint256 _rate) external nonReentrant {
-         require(msg.sender == owner,"only owner" );
-        uint256 rate = rates[_lsdToken] ;
+    function getLsdRate(address _lsdToken) view external returns(uint256){
+        return rate;
+    }
+    function setLsdRate(uint256 _rate) external nonReentrant {
+        require(msg.sender == rateManager,"only rateManager" );
         require(_rate >= 1e18,"wrong _rate" );
         require(_rate > rate,"wrong _rate" );
-        rates[_lsdToken] = _rate;
-        emit LsdRateSeted(_lsdToken,_rate);
+         rate = _rate;
+        emit LsdRateSeted(lsdToken,_rate);
     }
 
     
