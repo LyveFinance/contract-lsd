@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+pragma solidity 0.8.13;
 
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {IVault} from "./interfaces/IVault.sol";
@@ -95,20 +95,20 @@ contract Vault is IVault, ERC20Permit, ReentrancyGuard {
         return claimFeeLsd;
     }
 
-   function _getEqEth(uint256 lsdAmount) internal returns(uint256 eqEth) {
+   function _getEqEth(uint256 lsdAmount) internal view returns(uint256 eqEth) {
         if(lsdAmount == 0 ){
           return 0;
         }
-        uint256 currentRate = ILsdRateOracle(lsdRateOracle).getLsdRate(lsdToken);
+        uint256 currentRate = ILsdRateOracle(lsdRateOracle).getLsdRate();
         require(currentRate >= 1000000000000000000 ,"rate wrong");
         eqEth = (lsdAmount * currentRate) / 1e18;
     }
     
-    function _getEqLsd(uint256 amount) internal returns(uint256 eqLsd) {
+    function _getEqLsd(uint256 amount) internal view returns(uint256 eqLsd) {
         if(amount == 0 ){
           return 0;
         }
-        uint256 currentRate = ILsdRateOracle(lsdRateOracle).getLsdRate(lsdToken);
+        uint256 currentRate = ILsdRateOracle(lsdRateOracle).getLsdRate();
         require(currentRate >= 1000000000000000000 ,"rate wrong");
         eqLsd = (amount * 1e18) / currentRate;
     }

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.13;
 
-import {ILayerZeroEndpoint} from "layerZero/interfaces/ILayerZeroEndpoint.sol";
-import {ILayerZeroReceiver} from "layerZero/interfaces/ILayerZeroReceiver.sol";
+import {ILayerZeroEndpoint} from "./interfaces/ILayerZeroEndpoint.sol";
+import {ILayerZeroReceiver} from "./interfaces/ILayerZeroReceiver.sol";
 import {ILsdRateOracle} from "./interfaces/ILsdRateOracle.sol";
 import {IxF33dReceiver} from "./interfaces/IxF33dReceiver.sol";
 
@@ -57,9 +57,9 @@ contract xF33dReceiver is ILayerZeroReceiver ,IxF33dReceiver{
     }
     function _setOracleRate() internal   {
         lastUpdated = uint32(block.timestamp);
-        (roundId, rate, startedAt, timestamp, answeredInRound) = abi.decode(
+        (uint80 roundId, uint256 rate, uint256 startedAt, uint256 timestamp, uint80 answeredInRound) = abi.decode(
             oracleData,
-            (uint80, int256, uint256, uint256, uint80)
+            (uint80, uint256, uint256, uint256, uint80)
         );
         ILsdRateOracle(lsdRateOracle).setLsdRate(rate);
         emit FeedUpdated(lastUpdated);

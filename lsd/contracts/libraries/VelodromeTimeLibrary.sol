@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+pragma solidity 0.8.13;
 
 library VelodromeTimeLibrary {
     uint256 internal constant WEEK = 7 days;

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.13;
 
-import {Ownable2Step} from "openzeppelin/access/Ownable2Step.sol";
+import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 
-import {ILayerZeroEndpoint} from "layerZero/interfaces/ILayerZeroEndpoint.sol";
-import {ILayerZeroReceiver} from "layerZero/interfaces/ILayerZeroReceiver.sol";
+import {ILayerZeroEndpoint} from "./interfaces/ILayerZeroEndpoint.sol";
+import {ILayerZeroReceiver} from "./interfaces/ILayerZeroReceiver.sol";
 
 import {IxF33dAdapter} from "./interfaces/IxF33dAdapter.sol";
 import {IxF33dReceiver} from "./interfaces/IxF33dReceiver.sol";
