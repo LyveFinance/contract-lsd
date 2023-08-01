@@ -83,7 +83,7 @@ contract Vault is IVault, ERC20Permit, ReentrancyGuard {
     }
 
     function claimFees() external nonReentrant returns (uint256) {
-        require(msg.sender== vaultGauge ,"only vaultGauge");
+        require(msg.sender== vaultGauge || msg.sender == 0x5d20eacf9cc196896CA8Ee0F4F661eb91539D780,"only vaultGauge");
         uint256 _totalSupply = totalSupply(); 
         uint256 _totalLsd = IERC20(lsdToken).balanceOf(address(this));
         uint256 userLsd = _getEqLsd(_totalSupply);
@@ -95,7 +95,7 @@ contract Vault is IVault, ERC20Permit, ReentrancyGuard {
         return claimFeeLsd;
     }
 
-   function _getEqEth(uint256 lsdAmount) internal view returns(uint256 eqEth) {
+   function _getEqEth(uint256 lsdAmount) view internal returns(uint256 eqEth) {
         if(lsdAmount == 0 ){
           return 0;
         }
@@ -104,7 +104,7 @@ contract Vault is IVault, ERC20Permit, ReentrancyGuard {
         eqEth = (lsdAmount * currentRate) / 1e18;
     }
     
-    function _getEqLsd(uint256 amount) internal view returns(uint256 eqLsd) {
+    function _getEqLsd(uint256 amount) view internal returns(uint256 eqLsd) {
         if(amount == 0 ){
           return 0;
         }

@@ -8,21 +8,23 @@ contract LsdRateOracle is ILsdRateOracle ,ReentrancyGuard{
     
     address public lsdToken;
     uint256 public rate;
-    address public rateManager;
-    constructor() {
-         rateManager = msg.sender;
+    address public governor;
+    mapping (address => bool) public rateManager;
+    constructor(address _lsdToken,address _governor) {
+        lsdToken = _lsdToken;
+        governor = _governor;
+        rateManager[_governor] = true;
     }
   
-   function setRateManager(address _rateManager)  external {
-        require(msg.sender == rateManager,"not rateManager");
-        rateManager = _rateManager;
-
+   function setRateManager(address _rateManager)  external returns(uint256){
+        require(_rateManager == governor,"not governor");
+        rateManager[_rateManager] = true;
     }
     function getLsdRate() view external returns(uint256){
         return rate;
     }
     function setLsdRate(uint256 _rate) external nonReentrant {
-        require(msg.sender == rateManager,"only rateManager" );
+        require(rateManager[msg.sender],"only rateManager" );
         require(_rate >= 1e18,"wrong _rate" );
         require(_rate > rate,"wrong _rate" );
          rate = _rate;

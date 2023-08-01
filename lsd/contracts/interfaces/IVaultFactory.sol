@@ -21,7 +21,7 @@ interface IVaultFactory {
     function getVault(address token) external view returns (address);
  
     /// @param token .
-    function createVault(address token) external returns (address vault);
+    function createVault(address token,address _lsdRateOracle) external returns (address vault);
 
      /// setGauge .
     function setGauge(address vault,address gauge) external ;

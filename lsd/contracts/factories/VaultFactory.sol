@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.13;
 
-import {IVaultFactory} from "../interfaces/factories/IVaultFactory.sol";
+import {IVaultFactory} from "../interfaces/IVaultFactory.sol";
 import {IVault} from "../interfaces/IVault.sol";
 import {Vault} from "../Vault.sol";
 
 contract VaultFactory is IVaultFactory {
-
-   address public lsdRateOracle;
 
     mapping(address => address) private _getVault;
 
@@ -21,9 +19,8 @@ contract VaultFactory is IVaultFactory {
         require(msg.sender == owner ,"onlyOwner");
         _;
     }
-    constructor(address _lsdRateOracle) {
+    constructor() {
        owner = msg.sender;
-       lsdRateOracle = _lsdRateOracle;
     }
 
     /// @inheritdoc IVaultFactory
@@ -46,7 +43,7 @@ contract VaultFactory is IVaultFactory {
      }
 
     /// @inheritdoc IVaultFactory
-    function createVault(address lsdToken) external returns (address vault) {
+    function createVault(address lsdToken,address lsdRateOracle) external returns (address vault) {
 
         if (lsdToken == address(0)) revert ZeroAddress();
 
