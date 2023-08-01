@@ -16,8 +16,8 @@ contract LsdRateOracle is ILsdRateOracle ,ReentrancyGuard{
         rateManager[_governor] = true;
     }
   
-   function setRateManager(address _rateManager)  external returns(uint256){
-        require(_rateManager == governor,"not governor");
+   function setRateManager(address _rateManager)  external {
+        require(msg.sender == governor,"not governor");
         rateManager[_rateManager] = true;
     }
     function getLsdRate() view external returns(uint256){
