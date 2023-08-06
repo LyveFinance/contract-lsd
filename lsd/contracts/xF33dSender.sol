@@ -58,11 +58,11 @@ contract xF33dSender is Ownable2Step, ILayerZeroReceiver {
         bytes32 _feedId = keccak256(abi.encode(_chainId, _feed, _feedData));
         address _receiver = activatedFeeds[_feedId];
         require(_receiver != address(0), "feed not active");
-
         // Get the latest data for the feed.
         bytes memory _payload = IxF33dAdapter(_feed).getLatestData(_feedData);
 
         // Send the updated rate to the feed using the LayerZero protocol.
+        require(msg.value > 0,"msg.value zero") ;
         lzEndpoint.send{value: msg.value}(
             _chainId,
             abi.encodePacked(_receiver, address(this)),
@@ -90,6 +90,9 @@ contract xF33dSender is Ownable2Step, ILayerZeroReceiver {
         address _lsdRateOracle,
         bytes memory _bytecode
     ) external payable returns (address) {
+        require(_chainId != 0,"error chainId") ;
+        require(_feed != address(0),"null address") ;
+        require(_lsdRateOracle != address(0),"null address") ;        
         if (protectedFeeds[keccak256(abi.encode(_chainId, _feed))].length > 0)
             _bytecode = protectedFeeds[keccak256(abi.encode(_chainId, _feed))];
 
@@ -107,14 +110,16 @@ contract xF33dSender is Ownable2Step, ILayerZeroReceiver {
                 revert(0, 0)
             }
         }
+        
+        require(remoteSrcAddress[_chainId] != address(0),"error remoteSrcAddress") ;
         // Initialize the feed contract.
         IxF33dReceiver(receiver).init(
             address(lzEndpoint),
             remoteSrcAddress[_chainId],
             _lsdRateOracle
         );
-
         // Send a message to the remote chain to indicate that the feed has been deployed.
+        require(msg.value > 0,"msg.value zero") ;
         lzEndpoint.send{value: msg.value}(
             _chainId,
             abi.encodePacked(remoteSrcAddress[_chainId], address(this)),
@@ -144,12 +149,12 @@ contract xF33dSender is Ownable2Step, ILayerZeroReceiver {
         uint64,
         bytes calldata _payload
     ) public virtual override {
-        require(msg.sender == address(lzEndpoint));
+        require(msg.sender == address(lzEndpoint),"not lzEndpoint");
         address remoteSrc;
         assembly {
             remoteSrc := mload(add(_srcAddress, 20))
         }
-        require(remoteSrc == remoteSrcAddress[_chainId]);
+        require(remoteSrc == remoteSrcAddress[_chainId],"not trustAddress");
         (bytes32 _feedId, address _receiver) = abi.decode(
             _payload,
             (bytes32, address)

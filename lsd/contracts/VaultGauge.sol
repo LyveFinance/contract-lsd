@@ -84,6 +84,11 @@ contract VaultGauge is IGauge {
     event ClaimRewards(address indexed from, address indexed reward, uint amount);
 
     constructor(address _stake, address _internal_bribe, address _external_bribe, address  __ve, address _voter, bool _forPair, address[] memory _allowedRewardTokens) {
+        require(_stake != address(0),"null address");
+        require(_internal_bribe != address(0),"null address") ;
+        require(_external_bribe != address(0),"null address");
+        require(__ve != address(0),"null address");
+        require(_voter != address(0),"null address");
         stake = _stake;
         internal_bribe = _internal_bribe;
         external_bribe = _external_bribe;
@@ -102,7 +107,7 @@ contract VaultGauge is IGauge {
     // simple re-entrancy check
     uint internal _unlocked = 1;
     modifier lock() {
-        require(_unlocked == 1);
+        require(_unlocked == 1,"error unlocked");
         _unlocked = 2;
         _;
         _unlocked = 1;
@@ -523,8 +528,8 @@ contract VaultGauge is IGauge {
     }
 
     function notifyRewardAmount(address token, uint amount) external lock {
-        require(token != stake);
-        require(amount > 0);
+        require(token != stake,"error token");
+        require(amount > 0,"error amount");
         if (!isReward[token]) {
             require(IVoter(voter).isWhitelisted(token), "rewards tokens must be whitelisted");
             require(rewards.length < MAX_REWARD_TOKENS, "too many rewards tokens");
@@ -564,21 +569,21 @@ contract VaultGauge is IGauge {
     }
 
     function _safeTransfer(address token, address to, uint256 value) internal {
-        require(token.code.length > 0);
+        require(token.code.length > 0,"error token");
         (bool success, bytes memory data) =
         token.call(abi.encodeWithSelector(IERC20.transfer.selector, to, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))));
     }
 
     function _safeTransferFrom(address token, address from, address to, uint256 value) internal {
-        require(token.code.length > 0);
+        require(token.code.length > 0,"error token");
         (bool success, bytes memory data) =
         token.call(abi.encodeWithSelector(IERC20.transferFrom.selector, from, to, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))));
     }
 
     function _safeApprove(address token, address spender, uint256 value) internal {
-        require(token.code.length > 0);
+        require(token.code.length > 0,"error token");
         (bool success, bytes memory data) =
         token.call(abi.encodeWithSelector(IERC20.approve.selector, spender, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))));

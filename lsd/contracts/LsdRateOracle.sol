@@ -11,16 +11,22 @@ contract LsdRateOracle is ILsdRateOracle ,ReentrancyGuard{
     address public governor;
     mapping (address => bool) public rateManager;
     constructor(address _lsdToken,address _governor) {
+        require(_lsdToken != address(0),"null address");
+        require(_governor != address(0),"null address");
         lsdToken = _lsdToken;
         governor = _governor;
         rateManager[_governor] = true;
     }
   
-   function setRateManager(address _rateManager)  external {
+   function setRateManager(address _rateManager)  external{
         require(msg.sender == governor,"not governor");
         rateManager[_rateManager] = true;
     }
-    function getLsdRate() view external returns(uint256){
+     function removeRateManager(address _rateManager)  external{
+        require(msg.sender == governor,"not governor");
+        delete rateManager[_rateManager];
+    }
+    function getLsdRate()  external view returns(uint256){
         return rate;
     }
     function setLsdRate(uint256 _rate) external nonReentrant {

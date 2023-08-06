@@ -44,6 +44,8 @@ contract Vault is IVault, ERC20Permit, ReentrancyGuard {
 
     function initialize(address _lsdToken, address _lsdRateOracle) external {
         if (vaultFactory != address(0)) revert FactoryAlreadySet();
+        require(_lsdToken != address(0),"null address") ;
+        require(_lsdRateOracle != address(0),"null address") ;
         vaultFactory = msg.sender;
         lsdToken = _lsdToken;
         lsdRateOracle = _lsdRateOracle;
@@ -83,10 +85,11 @@ contract Vault is IVault, ERC20Permit, ReentrancyGuard {
     }
 
     function claimFees() external nonReentrant returns (uint256) {
-        require(msg.sender== vaultGauge || msg.sender == 0x5d20eacf9cc196896CA8Ee0F4F661eb91539D780,"only vaultGauge");
+        require(msg.sender== vaultGauge ,"only vaultGauge");
         uint256 _totalSupply = totalSupply(); 
         uint256 _totalLsd = IERC20(lsdToken).balanceOf(address(this));
         uint256 userLsd = _getEqLsd(_totalSupply);
+        require(_totalLsd > userLsd,"null address") ;
         uint256 claimFeeLsd = _totalLsd - userLsd;
         if(claimFeeLsd > 0 ){
           IERC20(lsdToken).safeTransfer(msg.sender, claimFeeLsd);
@@ -100,7 +103,7 @@ contract Vault is IVault, ERC20Permit, ReentrancyGuard {
           return 0;
         }
         uint256 currentRate = ILsdRateOracle(lsdRateOracle).getLsdRate();
-        require(currentRate >= 1000000000000000000 ,"rate wrong");
+        require(currentRate >= 1e18 ,"rate wrong");
         eqEth = (lsdAmount * currentRate) / 1e18;
     }
     
@@ -109,7 +112,7 @@ contract Vault is IVault, ERC20Permit, ReentrancyGuard {
           return 0;
         }
         uint256 currentRate = ILsdRateOracle(lsdRateOracle).getLsdRate();
-        require(currentRate >= 1000000000000000000 ,"rate wrong");
+        require(currentRate >= 1e18 ,"rate wrong");
         eqLsd = (amount * 1e18) / currentRate;
     }
     

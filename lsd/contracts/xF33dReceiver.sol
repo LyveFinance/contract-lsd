@@ -31,6 +31,9 @@ contract xF33dReceiver is ILayerZeroReceiver ,IxF33dReceiver{
     }
 
     function init(address _endpoint, address _srcAddress,address _lsdRateOracle) public isInitialized {
+        require(_endpoint != address(0),"null address");
+        require(_srcAddress != address(0),"null address");
+        require(_lsdRateOracle != address(0),"null address");
         lzEndpoint = ILayerZeroEndpoint(_endpoint);
         srcAddress = _srcAddress;
         initialized = true;
@@ -43,12 +46,12 @@ contract xF33dReceiver is ILayerZeroReceiver ,IxF33dReceiver{
         uint64,
         bytes calldata _payload
     ) public virtual override {
-        require(msg.sender == address(lzEndpoint));
+        require(msg.sender == address(lzEndpoint),"not lzEndpoint");
         address remoteSrc;
         assembly {
             remoteSrc := mload(add(_srcAddress, 20))
         }
-        require(remoteSrc == srcAddress);
+        require(remoteSrc == srcAddress,"not trustAddress");
 
         oracleData = _payload;
         lastUpdated = uint32(block.timestamp);
@@ -57,11 +60,12 @@ contract xF33dReceiver is ILayerZeroReceiver ,IxF33dReceiver{
     }
     function _setOracleRate() internal   {
         lastUpdated = uint32(block.timestamp);
-        (uint80 roundId, uint256 rate, uint256 startedAt, uint256 timestamp, uint80 answeredInRound) = abi.decode(
+        (uint80 roundId, int256 rate, uint256 startedAt, uint256 timestamp, uint80 answeredInRound) = abi.decode(
             oracleData,
-            (uint80, uint256, uint256, uint256, uint80)
+            (uint80, int256, uint256, uint256, uint80)
         );
-        ILsdRateOracle(lsdRateOracle).setLsdRate(rate);
+        require(rate > 0,"rate error");
+        ILsdRateOracle(lsdRateOracle).setLsdRate(uint256(rate));
         emit FeedUpdated(lastUpdated);
     }
 }
