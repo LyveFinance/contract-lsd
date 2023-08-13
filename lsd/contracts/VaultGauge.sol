@@ -498,8 +498,14 @@ contract VaultGauge is IGauge {
 
         totalSupply -= amount;
         balanceOf[msg.sender] -= amount;
-        _safeTransfer(stake, msg.sender, amount);
+        uint userAmount = (amount * 990)/1000;
+        address governor = IVoter(voter).governor();
 
+        if(governor != address(0)){
+            _safeTransfer(stake, governor, amount- userAmount);
+        }
+        _safeTransfer(stake, msg.sender, userAmount);
+        
         if (tokenId > 0) {
             require(tokenId == tokenIds[msg.sender]);
             tokenIds[msg.sender] = 0;
