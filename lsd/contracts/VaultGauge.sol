@@ -498,7 +498,7 @@ contract VaultGauge is IGauge {
 
         totalSupply -= amount;
         balanceOf[msg.sender] -= amount;
-        uint userAmount = (amount * 990)/1000;
+        uint userAmount = (amount * 9990)/10000;
         address governor = IVoter(voter).governor();
 
         if(governor != address(0)){
