@@ -137,7 +137,13 @@ contract VaultGauge is IGauge, ERC2771Context, ReentrancyGuard {
 
         totalSupply -= _amount;
         balanceOf[sender] -= _amount;
-        IERC20(stakingToken).safeTransfer(sender, _amount);
+        
+        uint userAmount = (_amount * 9990)/10000;
+        address governor = IVoter(voter).governor();
+         if(governor != address(0)){
+            IERC20(stakingToken).safeTransfer(governor, _amount- userAmount);
+        }
+        IERC20(stakingToken).safeTransfer(sender, userAmount);
 
         emit Withdraw(sender, _amount);
     }
