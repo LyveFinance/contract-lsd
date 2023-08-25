@@ -1,5 +1,5 @@
-pragma solidity ^0.8.13;
-
+pragma solidity ^0.8.19;
+//SPDX-License-Identifier: BUSL-1.1
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {ILsdRateOracle} from "./interfaces/ILsdRateOracle.sol";
 

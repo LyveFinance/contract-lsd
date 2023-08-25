@@ -1,5 +1,5 @@
+pragma solidity 0.8.19;
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.13;
 
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {IVault} from "./interfaces/IVault.sol";
@@ -11,8 +11,8 @@ import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20P
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /// @title Pool
-/// @author velodrome.finance, @figs999, @pegahcarter
-/// @notice Veldrome V2 token pool, either stable or volatile
+/// @author lyve.finance
+
 contract Vault is IVault, ERC20Permit, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -49,9 +49,9 @@ contract Vault is IVault, ERC20Permit, ReentrancyGuard {
         vaultFactory = msg.sender;
         lsdToken = _lsdToken;
         lsdRateOracle = _lsdRateOracle;
-        string memory symbol = ERC20(_lsdToken).symbol();
-        _name = string(abi.encodePacked("Vault-", symbol));
-        _symbol = string(abi.encodePacked("Vault-", symbol));
+        string memory vaultSymbol = ERC20(_lsdToken).symbol();
+        _name = string(abi.encodePacked("Vault-", vaultSymbol));
+        _symbol = string(abi.encodePacked("Vault-", vaultSymbol));
     }
 
     function deposit(uint256 amount) external {
@@ -89,7 +89,7 @@ contract Vault is IVault, ERC20Permit, ReentrancyGuard {
         uint256 _totalSupply = totalSupply(); 
         uint256 _totalLsd = IERC20(lsdToken).balanceOf(address(this));
         uint256 userLsd = _getEqLsd(_totalSupply);
-        require(_totalLsd > userLsd,"null address") ;
+        require(_totalLsd >= userLsd,"error userLsd") ;
         uint256 claimFeeLsd = _totalLsd - userLsd;
         if(claimFeeLsd > 0 ){
           IERC20(lsdToken).safeTransfer(msg.sender, claimFeeLsd);

@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC721, IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import {IERC4906} from "@openzeppelin/contracts/interfaces/IERC4906.sol";
-import {IVotes} from "@openzeppelin/contracts/governance/utils/IVotes.sol";
-
+import {IVotes} from "../governance/IVotes.sol";
 
 interface IVotingEscrow is IVotes, IERC4906, IERC721Metadata {
     struct LockedBalance {
@@ -467,6 +466,7 @@ interface IVotingEscrow is IVotes, IERC4906, IERC721Metadata {
     /// @notice A record of states for signing / validating signatures
     function nonces(address account) external view returns (uint256);
 
+    /// @inheritdoc IVotes
     function delegates(uint256 delegator) external view returns (uint256);
 
     /// @notice A record of delegated token checkpoints for each account, by index
@@ -475,6 +475,7 @@ interface IVotingEscrow is IVotes, IERC4906, IERC721Metadata {
     /// @return Checkpoint
     function checkpoints(uint256 tokenId, uint48 index) external view returns (Checkpoint memory);
 
+    /// @inheritdoc IVotes
     function getPastVotes(address account, uint256 tokenId, uint256 timestamp) external view returns (uint256);
 
     /// @inheritdoc IVotes
@@ -484,8 +485,10 @@ interface IVotingEscrow is IVotes, IERC4906, IERC721Metadata {
                              DAO VOTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /// @inheritdoc IVotes
     function delegate(uint256 delegator, uint256 delegatee) external;
 
+    /// @inheritdoc IVotes
     function delegateBySig(
         uint256 delegator,
         uint256 delegatee,

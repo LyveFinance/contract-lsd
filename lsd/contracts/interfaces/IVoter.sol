@@ -195,14 +195,12 @@ interface IVoter {
 
     /// @notice Create a new gauge (unpermissioned).
     /// @dev Governor can create a new gauge for a pool with any address.
-    /// @dev V1 gauges can only be created by governor.
     /// @param _poolFactory .
     /// @param _pool .
     function createGauge(address _poolFactory, address _pool) external returns (address);
 
    /// @notice Create a new Vault gauge (unpermissioned).
     /// @dev Governor can create a new gauge for a vault with any address.
-    /// @dev V1 gauges can only be created by governor.
     /// @param _vaultFactory .
     /// @param _vault .
     function createVaultGauge(address _vaultFactory, address _vault) external  returns (address); 
